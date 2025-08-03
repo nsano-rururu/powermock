@@ -1,23 +1,20 @@
 repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
 }
 
 group = "org.powermock"
 
-apply plugin: 'propdeps'
-apply plugin: 'propdeps-maven'
 apply plugin: 'java'
 
-targetCompatibility = 1.6
-sourceCompatibility = 1.6
+targetCompatibility = 1.8
+sourceCompatibility = 1.8
 
 tasks.withType(JavaCompile) {
     options.warnings = false
 }
 
-if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+if (JavaVersion.current().isJava8Compatible()) {
     apply plugin: 'checkstyle'
     checkstyle {
         toolVersion = checkstyleVersion
