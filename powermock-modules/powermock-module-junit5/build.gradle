@@ -1,0 +1,25 @@
+description = "PowerMock support module for JUnit 5 (Jupiter)."
+
+dependencies {
+    compile(project(":powermock-core"))
+    compile(project(":powermock-reflect"))
+    
+    // JUnit 5 dependencies
+    compile("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
+    compile("org.junit.jupiter:junit-jupiter-params:${junit5Version}")
+    
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:${junit5Version}")
+    testCompile("org.junit.jupiter:junit-jupiter-params:${junit5Version}")
+    testCompile("org.junit.platform:junit-platform-launcher:1.9.3")
+    testCompile("org.hamcrest:hamcrest-core:${hamcrestVersion}")
+    testCompile("org.assertj:assertj-core:${assertjVersion}")
+    testCompile("org.mockito:mockito-core:${mockitoVersion}"){
+        exclude group: 'net.bytebuddy', module: 'byte-buddy'
+        exclude group: 'net.bytebuddy', module: 'byte-buddy-agent'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

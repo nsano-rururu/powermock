@@ -1,20 +1,14 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
-        maven {
-            url 'https://repo.spring.io/plugins-release'
-        }
+        gradlePluginPortal()
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
     }
     dependencies {
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'net.researchgate:gradle-release:2.4.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
-        classpath 'org.shipkit:shipkit:2.3.4'
         classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.4.1'
     }
 }
@@ -30,10 +24,12 @@ ext{
     objenesisVersion = "3.2"
     javassistVersion = "3.27.0-GA"
     junitVersion = "4.12"
+    junit5Version = "5.9.3"
+    junit6Version = "6.0.0-M2"
     junitRulesVersion = "4.8.2"
     testngVersion = "6.9.10"
     xstreamVersion = "1.4.10"
-    mockitoVersion = "4.3.1"
+    mockitoVersion = "5.18.0"
     servletVersion = "2.5"
     jacocoVersion = "0.7.7.201606060606"
     eclipseJdt = "3.3.0-v_771"
@@ -41,7 +37,7 @@ ext{
     systemRulesVersion="1.18.0"
 }
 
-apply plugin: 'org.shipkit.java'
+//apply plugin: 'org.shipkit.java'
 
 description = 'PowerMock allows you to unit test code normally regarded as untestable.\n' +
         '        For instance it is possible to mock static methods, remove static initializers, allow mocking without dependency\n' +
@@ -54,7 +50,9 @@ description = 'PowerMock allows you to unit test code normally regarded as untes
 apply from: "${gradleScriptDir}/version.gradle"
 
 allprojects{
-    apply plugin: 'propdeps-idea'
+    repositories {
+        mavenCentral()
+    }
 }
 
 apply from: "${gradleScriptDir}/modules.gradle"

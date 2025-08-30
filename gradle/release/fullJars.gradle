@@ -49,5 +49,5 @@ configure(fullJars){ project ->
         }
     }
 
-    apply from: "${gradleScriptDir}/release/publish-fullJar.gradle"
+    //apply from: "${gradleScriptDir}/release/publish-fullJar.gradle"
 }

@@ -1,9 +1,9 @@
-def publishableModules = allprojects - rootProject - project(":powermock-api") - project(":powermock-classloading") - project(":powermock-modules") - project(":tests") - project(":tests").subprojects - project(":powermock-release") - project(":powermock-release").subprojects
+def publishableModules = allprojects - rootProject - project(":powermock-api") - project(":powermock-classloading") - project(":powermock-modules") - project(":tests") - project(":tests").subprojects// - project(":powermock-release") - project(":powermock-release").subprojects
 
 configure(publishableModules) { project ->
     apply from: "${gradleScriptDir}/java-module.gradle"
     apply from: "${gradleScriptDir}/publishing/publishable-module.gradle"
-    apply from: "${gradleScriptDir}/publishing/publish.gradle"
+    //apply from: "${gradleScriptDir}/publishing/publish.gradle"
 }
 
 def skippedTasksForUnpublishableModules = [
@@ -16,8 +16,9 @@ def skippedTasksForUnpublishableModules = [
     'install'
 ]
 
-def unpublishableModules = allprojects - publishableModules - project(":powermock-release").subprojects
+def unpublishableModules = allprojects - publishableModules// - project(":powermock-release").subprojects
 configure(unpublishableModules) { project ->
+    apply from: "${gradleScriptDir}/java-module.gradle"
     project.tasks.all {
         if(skippedTasksForUnpublishableModules.contains(it.name)) {
             it.enabled = false
@@ -34,14 +35,14 @@ def skippedTasksForGenericModules = [
     'sourcesJar'
 ]
 
-def genericModules = project(":powermock-release").subprojects
-configure(genericModules) { project ->
-    project.tasks.all {
-        if (skippedTasksForGenericModules.contains(it.name)) {
-            it.enabled = false
-        }
-    }
-}
+//def genericModules = project(":powermock-release").subprojects
+//configure(genericModules) { project ->
+//    project.tasks.all {
+//        if (skippedTasksForGenericModules.contains(it.name)) {
+//            it.enabled = false
+//        }
+//    }
+//}
 
 if (project.hasProperty('checkJava6Compatibility') && !System.getenv("SKIP_RELEASE")) {
     //if we're skipping release, let's also skip checking compatibility (faster builds)
@@ -282,7 +283,7 @@ project(":powermock-modules:powermock-module-junit4-rule") {
         compile(project(":powermock-core"))
         compile(project(":powermock-modules:powermock-module-junit4-common"))
 
-        provided(project(":powermock-classloading:powermock-classloading-base"))
+        compileOnly(project(":powermock-classloading:powermock-classloading-base"))
 
         compile("junit:junit:${junitVersion}") {
             exclude group: 'org.hamcrest', module: 'hamcrest-core'
@@ -345,7 +346,35 @@ project(":powermock-modules:powermock-module-testng-agent") {
     }
 }
 
+project(":powermock-modules:powermock-module-junit5") {
+    description = "PowerMock support module for JUnit 5 (Jupiter)."
+
+    dependencies {
+        compile(project(":powermock-core"))
+        compile(project(":powermock-reflect"))
+        
+        // JUnit 5 dependencies
+        compile("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
+        compile("org.junit.jupiter:junit-jupiter-params:${junit5Version}")
+        
+        testCompile("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
+        testCompile("org.junit.jupiter:junit-jupiter-engine:${junit5Version}")
+        testCompile("org.junit.jupiter:junit-jupiter-params:${junit5Version}")
+        testCompile("org.junit.platform:junit-platform-launcher:1.9.3")
+        testCompile("org.hamcrest:hamcrest-core:${hamcrestVersion}")
+        testCompile("org.assertj:assertj-core:${assertjVersion}")
+        testCompile("org.mockito:mockito-core:${mockitoVersion}"){
+            exclude group: 'net.bytebuddy', module: 'byte-buddy'
+            exclude group: 'net.bytebuddy', module: 'byte-buddy-agent'
+        }
+    }
+    
+    test {
+        useJUnitPlatform()
+    }
+}
+
 configure(publishableModules) { project ->
-    apply from: "${gradleScriptDir}/release/publish-jar.gradle"
+    //apply from: "${gradleScriptDir}/release/publish-jar.gradle"
 
 }
