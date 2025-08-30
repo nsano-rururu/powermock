@@ -71,7 +71,7 @@ public class PowerMockExtension implements BeforeAllCallback, BeforeEachCallback
         // Initialize test method specific setup if needed
         final TestChunk testChunk = testSuiteChunker.getTestChunk(testMethod);
         if (testChunk != null) {
-            testChunk.getTestMethodAnnotations();
+            // TestChunk is initialized and ready for use
         }
     }
     
@@ -88,7 +88,11 @@ public class PowerMockExtension implements BeforeAllCallback, BeforeEachCallback
     
     private void init(Class<?> testClass) {
         previousTestClass = testClass;
-        testSuiteChunker = new PowerMockRuleTestSuiteChunker(testClass);
-        mockPolicyInitializer = new MockPolicyInitializerImpl(testClass);
+        try {
+            testSuiteChunker = new PowerMockRuleTestSuiteChunker(testClass);
+            mockPolicyInitializer = new MockPolicyInitializerImpl(testClass);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize PowerMock for test class: " + testClass.getName(), e);
+        }
     }
 }
